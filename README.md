@@ -10,4 +10,4 @@ Per a aquesta pràctica, he desenvolupat tres visualitzacions de dades. A contin
 - **Flow Map**: gràfic desenvolupat amb l'eina Tableau.  
 	https://public.tableau.com/views/Flowmap_17313565128640/Sheet1
 
-- **Hyperbolic Tree**: gràfic desenvolupat amb Python. El resultat es puja directament aquí al GitHub amb el nom `hyperbolic_tree.html`.
+- **Hyperbolic Tree**: gràfic desenvolupat amb Python. El resultat es puja directament aquí al GitHub amb el nom `hyper_tree.html`.
