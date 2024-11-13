@@ -1,0 +1,259 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #f0f0f0;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 800px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "black"}, "id": "1", "label": "NAICS structure", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11", "label": "Agriculture, Forestry, Fishing and HuntingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111", "label": "Crop ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1111", "label": "Oilseed and Grain FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11111", "label": "Soybean FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111110", "label": "Soybean Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11112", "label": "Oilseed (except Soybean) FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111120", "label": "Oilseed (except Soybean) Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11113", "label": "Dry Pea and Bean FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111130", "label": "Dry Pea and Bean Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11114", "label": "Wheat FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111140", "label": "Wheat Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11115", "label": "Corn FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111150", "label": "Corn Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11116", "label": "Rice FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111160", "label": "Rice Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11119", "label": "Other Grain FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111191", "label": "Oilseed and Grain Combination Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111199", "label": "All Other Grain Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1112", "label": "Vegetable and Melon FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11121", "label": "Vegetable and Melon FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111211", "label": "Potato Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111219", "label": "Other Vegetable (except Potato) and Melon Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1113", "label": "Fruit and Tree Nut FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11131", "label": "Orange GrovesT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111310", "label": "Orange Groves", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11132", "label": "Citrus (except Orange) GrovesT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111320", "label": "Citrus (except Orange) Groves ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11133", "label": "Noncitrus Fruit and Tree Nut FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111331", "label": "Apple Orchards ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111332", "label": "Grape Vineyards ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111333", "label": "Strawberry Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111334", "label": "Berry (except Strawberry) Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111335", "label": "Tree Nut Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111336", "label": "Fruit and Tree Nut Combination Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111339", "label": "Other Noncitrus Fruit Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1114", "label": "Greenhouse, Nursery, and Floriculture ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11141", "label": "Food Crops Grown Under CoverT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111411", "label": "Mushroom Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111419", "label": "Other Food Crops Grown Under Cover ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11142", "label": "Nursery and Floriculture ProductionT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111421", "label": "Nursery and Tree Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111422", "label": "Floriculture Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1119", "label": "Other Crop FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11191", "label": "Tobacco FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111910", "label": "Tobacco Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11192", "label": "Cotton FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111920", "label": "Cotton Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11193", "label": "Sugarcane FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111930", "label": "Sugarcane Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11194", "label": "Hay FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111940", "label": "Hay Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11199", "label": "All Other Crop FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111991", "label": "Sugar Beet Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111992", "label": "Peanut Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "111998", "label": "All Other Miscellaneous Crop Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112", "label": "Animal Production and AquacultureT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1121", "label": "Cattle Ranching and FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11211", "label": "Beef Cattle Ranching and Farming, including FeedlotsT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112111", "label": "Beef Cattle Ranching and Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112112", "label": "Cattle Feedlots ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11212", "label": "Dairy Cattle and Milk ProductionT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112120", "label": "Dairy Cattle and Milk Production", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11213", "label": "Dual-Purpose Cattle Ranching and FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112130", "label": "Dual-Purpose Cattle Ranching and Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1122", "label": "Hog and Pig FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11221", "label": "Hog and Pig FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112210", "label": "Hog and Pig Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1123", "label": "Poultry and Egg ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11231", "label": "Chicken Egg ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112310", "label": "Chicken Egg Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11232", "label": "Broilers and Other Meat Type Chicken ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112320", "label": "Broilers and Other Meat Type Chicken Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11233", "label": "Turkey ProductionT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112330", "label": "Turkey Production", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11234", "label": "Poultry HatcheriesT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112340", "label": "Poultry Hatcheries", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11239", "label": "Other Poultry ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112390", "label": "Other Poultry Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1124", "label": "Sheep and Goat FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11241", "label": "Sheep FarmingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112410", "label": "Sheep Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11242", "label": "Goat FarmingT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112420", "label": "Goat Farming", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1125", "label": "AquacultureT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11251", "label": "AquacultureT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112511", "label": "Finfish Farming and Fish Hatcheries ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112512", "label": "Shellfish Farming ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112519", "label": "Other Aquaculture ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1129", "label": "Other Animal ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11291", "label": "ApicultureT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112910", "label": "Apiculture", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11292", "label": "Horses and Other Equine ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112920", "label": "Horses and Other Equine Production", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11293", "label": "Fur-Bearing Animal and Rabbit ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112930", "label": "Fur-Bearing Animal and Rabbit Production", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11299", "label": "All Other Animal ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "112990", "label": "All Other Animal Production ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "113", "label": "Forestry and LoggingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1131", "label": "Timber Tract OperationsT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11311", "label": "Timber Tract OperationsT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "113110", "label": "Timber Tract Operations", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1132", "label": "Forest Nurseries and Gathering of Forest ProductsT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11321", "label": "Forest Nurseries and Gathering of Forest ProductsT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "113210", "label": "Forest Nurseries and Gathering of Forest Products ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1133", "label": "LoggingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11331", "label": "LoggingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "113310", "label": "Logging ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "114", "label": "Fishing, Hunting and TrappingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1141", "label": "FishingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11411", "label": "FishingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "114111", "label": "Finfish Fishing ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "114112", "label": "Shellfish Fishing ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "114119", "label": "Other Marine Fishing ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1142", "label": "Hunting and TrappingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11421", "label": "Hunting and TrappingT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "114210", "label": "Hunting and Trapping", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115", "label": "Support Activities for Agriculture and ForestryT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1151", "label": "Support Activities for Crop ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11511", "label": "Support Activities for Crop ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115111", "label": "Cotton Ginning ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115112", "label": "Soil Preparation, Planting, and Cultivating ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115113", "label": "Crop Harvesting, Primarily by Machine ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115114", "label": "Postharvest Crop Activities (except Cotton Ginning) ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115115", "label": "Farm Labor Contractors and Crew Leaders ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115116", "label": "Farm Management Services ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1152", "label": "Support Activities for Animal ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11521", "label": "Support Activities for Animal ProductionT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115210", "label": "Support Activities for Animal Production", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "1153", "label": "Support Activities for ForestryT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "11531", "label": "Support Activities for ForestryT ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "black"}, "id": "115310", "label": "Support Activities for Forestry", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "1", "to": "11"}, {"arrows": "to", "from": "11", "to": "111"}, {"arrows": "to", "from": "111", "to": "1111"}, {"arrows": "to", "from": "1111", "to": "11111"}, {"arrows": "to", "from": "11111", "to": "111110"}, {"arrows": "to", "from": "1111", "to": "11112"}, {"arrows": "to", "from": "11112", "to": "111120"}, {"arrows": "to", "from": "1111", "to": "11113"}, {"arrows": "to", "from": "11113", "to": "111130"}, {"arrows": "to", "from": "1111", "to": "11114"}, {"arrows": "to", "from": "11114", "to": "111140"}, {"arrows": "to", "from": "1111", "to": "11115"}, {"arrows": "to", "from": "11115", "to": "111150"}, {"arrows": "to", "from": "1111", "to": "11116"}, {"arrows": "to", "from": "11116", "to": "111160"}, {"arrows": "to", "from": "1111", "to": "11119"}, {"arrows": "to", "from": "11119", "to": "111191"}, {"arrows": "to", "from": "11119", "to": "111199"}, {"arrows": "to", "from": "111", "to": "1112"}, {"arrows": "to", "from": "1112", "to": "11121"}, {"arrows": "to", "from": "11121", "to": "111211"}, {"arrows": "to", "from": "11121", "to": "111219"}, {"arrows": "to", "from": "111", "to": "1113"}, {"arrows": "to", "from": "1113", "to": "11131"}, {"arrows": "to", "from": "11131", "to": "111310"}, {"arrows": "to", "from": "1113", "to": "11132"}, {"arrows": "to", "from": "11132", "to": "111320"}, {"arrows": "to", "from": "1113", "to": "11133"}, {"arrows": "to", "from": "11133", "to": "111331"}, {"arrows": "to", "from": "11133", "to": "111332"}, {"arrows": "to", "from": "11133", "to": "111333"}, {"arrows": "to", "from": "11133", "to": "111334"}, {"arrows": "to", "from": "11133", "to": "111335"}, {"arrows": "to", "from": "11133", "to": "111336"}, {"arrows": "to", "from": "11133", "to": "111339"}, {"arrows": "to", "from": "111", "to": "1114"}, {"arrows": "to", "from": "1114", "to": "11141"}, {"arrows": "to", "from": "11141", "to": "111411"}, {"arrows": "to", "from": "11141", "to": "111419"}, {"arrows": "to", "from": "1114", "to": "11142"}, {"arrows": "to", "from": "11142", "to": "111421"}, {"arrows": "to", "from": "11142", "to": "111422"}, {"arrows": "to", "from": "111", "to": "1119"}, {"arrows": "to", "from": "1119", "to": "11191"}, {"arrows": "to", "from": "11191", "to": "111910"}, {"arrows": "to", "from": "1119", "to": "11192"}, {"arrows": "to", "from": "11192", "to": "111920"}, {"arrows": "to", "from": "1119", "to": "11193"}, {"arrows": "to", "from": "11193", "to": "111930"}, {"arrows": "to", "from": "1119", "to": "11194"}, {"arrows": "to", "from": "11194", "to": "111940"}, {"arrows": "to", "from": "1119", "to": "11199"}, {"arrows": "to", "from": "11199", "to": "111991"}, {"arrows": "to", "from": "11199", "to": "111992"}, {"arrows": "to", "from": "11199", "to": "111998"}, {"arrows": "to", "from": "11", "to": "112"}, {"arrows": "to", "from": "112", "to": "1121"}, {"arrows": "to", "from": "1121", "to": "11211"}, {"arrows": "to", "from": "11211", "to": "112111"}, {"arrows": "to", "from": "11211", "to": "112112"}, {"arrows": "to", "from": "1121", "to": "11212"}, {"arrows": "to", "from": "11212", "to": "112120"}, {"arrows": "to", "from": "1121", "to": "11213"}, {"arrows": "to", "from": "11213", "to": "112130"}, {"arrows": "to", "from": "112", "to": "1122"}, {"arrows": "to", "from": "1122", "to": "11221"}, {"arrows": "to", "from": "11221", "to": "112210"}, {"arrows": "to", "from": "112", "to": "1123"}, {"arrows": "to", "from": "1123", "to": "11231"}, {"arrows": "to", "from": "11231", "to": "112310"}, {"arrows": "to", "from": "1123", "to": "11232"}, {"arrows": "to", "from": "11232", "to": "112320"}, {"arrows": "to", "from": "1123", "to": "11233"}, {"arrows": "to", "from": "11233", "to": "112330"}, {"arrows": "to", "from": "1123", "to": "11234"}, {"arrows": "to", "from": "11234", "to": "112340"}, {"arrows": "to", "from": "1123", "to": "11239"}, {"arrows": "to", "from": "11239", "to": "112390"}, {"arrows": "to", "from": "112", "to": "1124"}, {"arrows": "to", "from": "1124", "to": "11241"}, {"arrows": "to", "from": "11241", "to": "112410"}, {"arrows": "to", "from": "1124", "to": "11242"}, {"arrows": "to", "from": "11242", "to": "112420"}, {"arrows": "to", "from": "112", "to": "1125"}, {"arrows": "to", "from": "1125", "to": "11251"}, {"arrows": "to", "from": "11251", "to": "112511"}, {"arrows": "to", "from": "11251", "to": "112512"}, {"arrows": "to", "from": "11251", "to": "112519"}, {"arrows": "to", "from": "112", "to": "1129"}, {"arrows": "to", "from": "1129", "to": "11291"}, {"arrows": "to", "from": "11291", "to": "112910"}, {"arrows": "to", "from": "1129", "to": "11292"}, {"arrows": "to", "from": "11292", "to": "112920"}, {"arrows": "to", "from": "1129", "to": "11293"}, {"arrows": "to", "from": "11293", "to": "112930"}, {"arrows": "to", "from": "1129", "to": "11299"}, {"arrows": "to", "from": "11299", "to": "112990"}, {"arrows": "to", "from": "11", "to": "113"}, {"arrows": "to", "from": "113", "to": "1131"}, {"arrows": "to", "from": "1131", "to": "11311"}, {"arrows": "to", "from": "11311", "to": "113110"}, {"arrows": "to", "from": "113", "to": "1132"}, {"arrows": "to", "from": "1132", "to": "11321"}, {"arrows": "to", "from": "11321", "to": "113210"}, {"arrows": "to", "from": "113", "to": "1133"}, {"arrows": "to", "from": "1133", "to": "11331"}, {"arrows": "to", "from": "11331", "to": "113310"}, {"arrows": "to", "from": "11", "to": "114"}, {"arrows": "to", "from": "114", "to": "1141"}, {"arrows": "to", "from": "1141", "to": "11411"}, {"arrows": "to", "from": "11411", "to": "114111"}, {"arrows": "to", "from": "11411", "to": "114112"}, {"arrows": "to", "from": "11411", "to": "114119"}, {"arrows": "to", "from": "114", "to": "1142"}, {"arrows": "to", "from": "1142", "to": "11421"}, {"arrows": "to", "from": "11421", "to": "114210"}, {"arrows": "to", "from": "11", "to": "115"}, {"arrows": "to", "from": "115", "to": "1151"}, {"arrows": "to", "from": "1151", "to": "11511"}, {"arrows": "to", "from": "11511", "to": "115111"}, {"arrows": "to", "from": "11511", "to": "115112"}, {"arrows": "to", "from": "11511", "to": "115113"}, {"arrows": "to", "from": "11511", "to": "115114"}, {"arrows": "to", "from": "11511", "to": "115115"}, {"arrows": "to", "from": "11511", "to": "115116"}, {"arrows": "to", "from": "115", "to": "1152"}, {"arrows": "to", "from": "1152", "to": "11521"}, {"arrows": "to", "from": "11521", "to": "115210"}, {"arrows": "to", "from": "115", "to": "1153"}, {"arrows": "to", "from": "1153", "to": "11531"}, {"arrows": "to", "from": "11531", "to": "115310"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
